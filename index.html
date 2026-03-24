@@ -749,22 +749,7 @@ document.getElementById('monthLabel').value=new Date().toLocaleDateString('en-PH
 
 render();
 renderHistory();
-<script>
-  // Function to clear all saved history
-  function clearHistory() {
-    // Ask for user confirmation
-    if (!confirm("Delete all saved history?")) return;
-
-    // Clear the snapshots array and localStorage
-    snapshots = [];
-    localStorage.removeItem('pesotrack_history');
-
-    // Update the history on the page
-    renderHistory();
-
-    // Show alert
-    alert("History cleared!");
-  }
 </script>
 </body>
 </html>
+
