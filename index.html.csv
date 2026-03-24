@@ -1,0 +1,76 @@
+﻿PesoTrack — Fund Tracker
+Month,March 2026
+
+INCOME
+Item,Amount (PHP),Notes
+Monthly Gross Salary,130000,
+Total Gross,130000,
+
+TAX (BIR TRAIN Law)
+Item,Amount (PHP),Notes
+Estimated Tax,24375,18.75% effective rate
+Net Income (After Tax),105625,
+
+BUDGET ALLOCATION (50/30/20)
+Category,Group,% of Net,Budget (PHP)
+Needs,Essentials (50%),50,52813
+Wants,Lifestyle (30%),20,21125
+Travel,Lifestyle (30%),10,10563
+Savings,Future (20%),15,15844
+Debts,Future (20%),5,5281
+Unallocated,-,0.0,0
+
+EXPENSES — NEEDS
+Item,Amount (PHP)
+Groceries,20000
+Insurance,2200
+Tubig & Ilaw,5000
+Subtotal,27200
+Budget,52813
+Remaining,25612.5
+
+EXPENSES — WANTS
+Item,Amount (PHP)
+Dining out,0
+Shopping,0
+Entertainment,0
+Subscriptions,0
+Subtotal,0
+Budget,21125
+Remaining,21125
+
+EXPENSES — TRAVEL
+Item,Amount (PHP)
+Flights,0
+Hotel,0
+Activities,0
+Subtotal,0
+Budget,10563
+Remaining,10562.5
+
+EXPENSES — SAVINGS
+Item,Amount (PHP)
+Emergency fund,0
+Investments,0
+Subtotal,0
+Budget,15844
+Remaining,15843.75
+
+EXPENSES — DEBTS
+Item,Amount (PHP)
+SLoan,17264
+CC,15000
+Spy,9300
+Mami,11200
+Ate bebe,20000
+Subtotal,72764
+Budget,5281
+Over by,67482.75
+
+SUMMARY
+Total Gross,130000
+Tax,24375
+Net Income,105625
+Total Budget,105625
+Total Spent,99964
+Remaining,5661
