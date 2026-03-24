@@ -749,6 +749,24 @@ document.getElementById('monthLabel').value=new Date().toLocaleDateString('en-PH
 
 render();
 renderHistory();
+<script>
+  // ...existing JavaScript code mo dito...
+
+  // Function para i-clear ang history
+  function clearHistory() {
+    // Tanungin muna kung sigurado ang user
+    if (!confirm("Delete all saved history?")) return;
+
+    // I-clear ang snapshots array at localStorage
+    snapshots = [];
+    localStorage.removeItem('pesotrack_history');
+
+    // I-update ang history sa page
+    renderHistory();
+
+    // Ipakita alert
+    alert("History cleared!");
+  }
 </script>
 </body>
 </html>
