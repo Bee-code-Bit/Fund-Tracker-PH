@@ -1,76 +1,754 @@
-﻿PesoTrack — Fund Tracker
-Month,March 2026
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PesoTrack — Fund Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg:#0f1117;--bg2:#171b25;--bg3:#1e2330;
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+    --text:#f0f2f7;--text2:#8b91a8;--text3:#555d74;
+    --accent:#4f8ef7;--accent2:#3a6fd8;
+    --green:#34c78a;--red:#e55a5a;--amber:#f0a04a;
+    --purple:#9b7fe8;--pink:#e06eaa;--teal:#3dbfa8;
+    --radius:14px;--radius-sm:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;}
+  .app{display:flex;min-height:100vh;}
+  .sidebar{width:240px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform 0.3s;overflow-y:auto;}
+  .main{margin-left:240px;flex:1;padding:32px 36px;max-width:900px;}
+  .logo{padding:0 24px 28px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+  .logo-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);letter-spacing:-0.3px;}
+  .logo-sub{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
+  .nav-section{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:14px 24px 6px;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;}
+  .nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+  .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(79,142,247,0.07);}
+  .nav-icon{width:16px;height:16px;opacity:0.7;flex-shrink:0;}
+  .nav-item.active .nav-icon{opacity:1;}
+  .mobile-header{display:none;align-items:center;gap:12px;padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+  .hamburger{background:none;border:none;cursor:pointer;color:var(--text);padding:4px;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .page-title{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:4px;}
+  .page-sub{font-size:13px;color:var(--text2);margin-bottom:28px;}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;}
+  .card-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:14px;}
+  .metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+  .metric-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;}
+  .metric-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;}
+  .metric-value{font-size:20px;font-weight:600;color:var(--text);}
+  .metric-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+  .income-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .income-row label{font-size:13px;color:var(--text2);white-space:nowrap;min-width:130px;}
+  .big-input{flex:1;font-size:22px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);outline:none;transition:border-color 0.15s;font-family:'DM Sans',sans-serif;}
+  .big-input:focus{border-color:var(--accent);}
+  .ot-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .ot-input{font-size:13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);outline:none;transition:border-color 0.15s;font-family:'DM Sans',sans-serif;}
+  .ot-input:focus{border-color:var(--accent);}
+  .ot-label-input{flex:1;min-width:0;}
+  .ot-amount-input{width:120px;text-align:right;}
+  .ot-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:0 4px;transition:color 0.15s;}
+  .ot-del:hover{color:var(--red);}
+  .add-btn{font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+  .add-btn:hover{background:var(--bg3);color:var(--text);}
+  .total-row{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px;margin-top:14px;border-top:1px solid var(--border);}
+  .total-label{font-size:13px;color:var(--text2);}
+  .total-value{font-size:22px;font-weight:600;color:var(--text);}
+  .rule-bar{display:flex;border-radius:6px;overflow:hidden;height:10px;margin:12px 0 6px;}
+  .rule-seg{height:100%;transition:flex 0.3s;}
+  .rule-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:16px;}
+  .cat-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+  .cat-row:last-child{border-bottom:none;}
+  .cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .cat-info{flex:1;min-width:0;}
+  .cat-name{font-size:14px;font-weight:500;color:var(--text);}
+  .cat-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--bg3);color:var(--text3);display:inline-block;margin-top:2px;}
+  .cat-pct-wrap{display:flex;align-items:center;gap:4px;}
+  .cat-pct-input{width:48px;font-size:13px;text-align:right;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color 0.15s;}
+  .cat-pct-input:focus{border-color:var(--accent);}
+  .bar-wrap{width:80px;height:3px;background:var(--border2);border-radius:2px;}
+  .bar-fill{height:3px;border-radius:2px;transition:width 0.3s;}
+  .cat-amount{font-size:14px;font-weight:600;color:var(--text);min-width:100px;text-align:right;}
+  .pct-warn{font-size:12px;color:var(--amber);margin-top:8px;}
 
-INCOME
-Item,Amount (PHP),Notes
-Monthly Gross Salary,130000,
-Total Gross,130000,
+  /* Expenses page */
+  .exp-category{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
+  .exp-cat-header{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;transition:background 0.15s;user-select:none;}
+  .exp-cat-header:hover{background:rgba(255,255,255,0.02);}
+  .exp-cat-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+  .exp-cat-name{font-size:15px;font-weight:600;flex:1;}
+  .exp-cat-meta{text-align:right;}
+  .exp-cat-total{font-size:15px;font-weight:600;}
+  .exp-cat-budget{font-size:11px;color:var(--text3);margin-top:2px;}
+  .exp-cat-chevron{color:var(--text3);font-size:12px;transition:transform 0.2s;margin-left:8px;}
+  .exp-cat-chevron.open{transform:rotate(180deg);}
+  .exp-cat-status{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .exp-body{padding:0 20px 16px;border-top:1px solid var(--border);}
+  .exp-item-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+  .exp-item-row:last-child{border-bottom:none;}
+  .exp-item-label{flex:1;min-width:0;font-size:13px;background:transparent;border:none;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;}
+  .exp-item-label::placeholder{color:var(--text3);}
+  .exp-item-amount{width:110px;font-size:13px;text-align:right;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color 0.15s;}
+  .exp-item-amount:focus{border-color:var(--accent);}
+  .exp-item-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:0 2px;transition:color 0.15s;line-height:1;}
+  .exp-item-del:hover{color:var(--red);}
+  .exp-subtotal{display:flex;justify-content:space-between;align-items:center;padding-top:12px;margin-top:4px;border-top:1px solid var(--border);}
+  .exp-subtotal-label{font-size:12px;color:var(--text3);}
+  .exp-subtotal-val{font-size:14px;font-weight:600;}
+  .progress-bar-wrap{height:6px;background:var(--border2);border-radius:4px;margin-top:10px;overflow:hidden;}
+  .progress-bar-fill{height:6px;border-radius:4px;transition:width 0.4s;}
+  .exp-add-row{padding:10px 0 2px;}
 
-TAX (BIR TRAIN Law)
-Item,Amount (PHP),Notes
-Estimated Tax,24375,18.75% effective rate
-Net Income (After Tax),105625,
+  /* Tax */
+  .bracket-table{width:100%;border-collapse:collapse;}
+  .bracket-table th{font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);padding:8px 0 10px;text-align:left;border-bottom:1px solid var(--border);}
+  .bracket-table td{font-size:13px;color:var(--text2);padding:9px 0;border-bottom:1px solid var(--border);}
+  .bracket-table tr:last-child td{border-bottom:none;}
+  .bracket-table td:last-child{text-align:right;}
+  .highlight-row td{color:var(--accent)!important;font-weight:600;}
+  .tax-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+  .tax-stat{background:var(--bg3);border-radius:var(--radius-sm);padding:14px 16px;}
+  .tax-stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;}
+  .tax-stat-value{font-size:18px;font-weight:600;color:var(--text);}
 
-BUDGET ALLOCATION (50/30/20)
-Category,Group,% of Net,Budget (PHP)
-Needs,Essentials (50%),50,52813
-Wants,Lifestyle (30%),20,21125
-Travel,Lifestyle (30%),10,10563
-Savings,Future (20%),15,15844
-Debts,Future (20%),5,5281
-Unallocated,-,0.0,0
+  /* Chart */
+  .chart-wrap{position:relative;height:280px;margin:8px 0;}
+  .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+  .donut-center-val{font-size:18px;font-weight:600;}
+  .donut-center-label{font-size:11px;color:var(--text3);}
+  .chart-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}
+  .leg-item{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:var(--radius-sm);padding:10px 14px;}
+  .leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .leg-name{flex:1;font-size:13px;color:var(--text2);}
+  .leg-val{font-size:13px;font-weight:600;color:var(--text);}
 
-EXPENSES — NEEDS
-Item,Amount (PHP)
-Groceries,20000
-Insurance,2200
-Tubig & Ilaw,5000
-Subtotal,27200
-Budget,52813
-Remaining,25612.5
+  /* History */
+  .history-empty{text-align:center;padding:48px 0;color:var(--text3);font-size:14px;}
+  .history-item{display:flex;align-items:center;gap:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:10px;}
+  .history-month{font-weight:600;font-size:14px;flex:1;}
+  .history-gross{font-size:13px;color:var(--text2);}
+  .history-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;transition:color 0.15s;}
+  .history-del:hover{color:var(--red);}
+  .save-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+  .save-btn:hover{background:var(--bg3);color:var(--text);}
 
-EXPENSES — WANTS
-Item,Amount (PHP)
-Dining out,0
-Shopping,0
-Entertainment,0
-Subscriptions,0
-Subtotal,0
-Budget,21125
-Remaining,21125
+  /* Export */
+  .month-input{width:100%;font-size:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;margin-bottom:16px;transition:border-color 0.15s;}
+  .month-input:focus{border-color:var(--accent);}
+  .export-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border-radius:var(--radius-sm);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+  .export-btn-primary{background:var(--accent);color:#fff;}
+  .export-btn-primary:hover{background:var(--accent2);}
+  .export-success{font-size:13px;color:var(--green);text-align:center;margin-top:10px;display:none;}
 
-EXPENSES — TRAVEL
-Item,Amount (PHP)
-Flights,0
-Hotel,0
-Activities,0
-Subtotal,0
-Budget,10563
-Remaining,10562.5
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;}
+  @media(max-width:720px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .sidebar-overlay.show{display:block;}
+    .main{margin-left:0;padding:20px 18px;}
+    .mobile-header{display:flex;}
+    .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .chart-legend{grid-template-columns:1fr;}
+    .tax-summary{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-title">PesoTrack</div>
+      <div class="logo-sub">Fund Tracker PH</div>
+    </div>
+    <div class="nav-section">Money</div>
+    <div class="nav-item active" onclick="showPage('income')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M3 5h7a2 2 0 010 4H4a2 2 0 000 4h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Income
+    </div>
+    <div class="nav-item" onclick="showPage('budget')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="9" width="4" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="6" y="5" width="4" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="1" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>Budget
+    </div>
+    <div class="nav-item" onclick="showPage('expenses')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Expenses
+    </div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="showPage('tax')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 14L14 2M5 3h8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tax (BIR)
+    </div>
+    <div class="nav-item" onclick="showPage('chart')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 8L8 2M8 8L13 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Chart
+    </div>
+    <div class="nav-item" onclick="showPage('history')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>History
+    </div>
+    <div class="nav-item" onclick="showPage('export')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Export CSV
+    </div>
+  </nav>
 
-EXPENSES — SAVINGS
-Item,Amount (PHP)
-Emergency fund,0
-Investments,0
-Subtotal,0
-Budget,15844
-Remaining,15843.75
+  <main class="main">
+    <div class="mobile-header">
+      <button class="hamburger" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <span style="font-family:'DM Serif Display',serif;font-size:18px;">PesoTrack</span>
+    </div>
 
-EXPENSES — DEBTS
-Item,Amount (PHP)
-SLoan,17264
-CC,15000
-Spy,9300
-Mami,11200
-Ate bebe,20000
-Subtotal,72764
-Budget,5281
-Over by,67482.75
+    <!-- Income -->
+    <div class="page active" id="page-income">
+      <div class="page-title">Income</div>
+      <div class="page-sub">Enter your monthly salary and any one-time earnings.</div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Total Gross</div><div class="metric-value" id="m-gross">₱0</div></div>
+        <div class="metric-card"><div class="metric-label">Tax (BIR)</div><div class="metric-value" id="m-tax" style="color:var(--red)">₱0</div><div class="metric-sub" id="m-tax-pct">0% rate</div></div>
+        <div class="metric-card"><div class="metric-label">Net Income</div><div class="metric-value" id="m-net" style="color:var(--green)">₱0</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Monthly Salary</div>
+        <div class="income-row">
+          <label>Gross salary ₱</label>
+          <input class="big-input" type="number" id="grossInput" value="50000" min="0" step="500" />
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="card-title" style="margin:0;">One-time Income</div>
+          <button class="add-btn" onclick="addOneTime()">+ Add</button>
+        </div>
+        <div id="otList"></div>
+        <div id="otEmpty" style="font-size:13px;color:var(--text3);padding:8px 0;">No one-time income added yet.</div>
+        <div class="total-row">
+          <span class="total-label">Total gross this month</span>
+          <span class="total-value" id="totalGrossDisplay">₱50,000</span>
+        </div>
+      </div>
+    </div>
 
-SUMMARY
-Total Gross,130000
-Tax,24375
-Net Income,105625
-Total Budget,105625
-Total Spent,99964
-Remaining,5661
+    <!-- Budget -->
+    <div class="page" id="page-budget">
+      <div class="page-title">Budget</div>
+      <div class="page-sub">Allocate your net income using the 50/30/20 rule.</div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Net Income</div><div class="metric-value" id="b-net">₱0</div></div>
+        <div class="metric-card"><div class="metric-label">Allocated</div><div class="metric-value" id="b-alloc">₱0</div><div class="metric-sub" id="b-alloc-pct"></div></div>
+        <div class="metric-card"><div class="metric-label">Unallocated</div><div class="metric-value" id="b-unalloc">₱0</div><div class="metric-sub" id="b-unalloc-pct"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Allocation split</div>
+        <div class="rule-bar" id="ruleBar"></div>
+        <div class="rule-labels" id="ruleLabels"></div>
+        <div id="catList"></div>
+        <div id="pctWarn" class="pct-warn" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Expenses -->
+    <div class="page" id="page-expenses">
+      <div class="page-title">Expenses</div>
+      <div class="page-sub">Track your actual spending per category.</div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Total Spent</div><div class="metric-value" id="e-total">₱0</div></div>
+        <div class="metric-card"><div class="metric-label">Budget</div><div class="metric-value" id="e-budget">₱0</div><div class="metric-sub">net income allocated</div></div>
+        <div class="metric-card"><div class="metric-label">Remaining</div><div class="metric-value" id="e-remain">₱0</div><div class="metric-sub" id="e-remain-pct"></div></div>
+      </div>
+      <div id="expCategoryList"></div>
+    </div>
+
+    <!-- Tax -->
+    <div class="page" id="page-tax">
+      <div class="page-title">Tax (BIR)</div>
+      <div class="page-sub">Philippine TRAIN Law income tax brackets.</div>
+      <div class="card">
+        <div class="card-title">Monthly brackets</div>
+        <table class="bracket-table">
+          <thead><tr><th>Monthly gross</th><th style="text-align:right">Tax</th></tr></thead>
+          <tbody id="bracketBody"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Your estimate</div>
+        <div class="tax-summary">
+          <div class="tax-stat"><div class="tax-stat-label">Estimated Tax</div><div class="tax-stat-value" id="t-tax">₱0</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Effective Rate</div><div class="tax-stat-value" id="t-rate">0%</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Net Take-home</div><div class="tax-stat-value" id="t-net">₱0</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Monthly Gross</div><div class="tax-stat-value" id="t-gross">₱0</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--text3);margin-top:14px;line-height:1.6;">Estimate only. SSS (~₱1,125), PhilHealth (~1%), and Pag-IBIG (₱100) deductions reduce taxable income before tax is applied.</p>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="page" id="page-chart">
+      <div class="page-title">Chart</div>
+      <div class="page-sub">Visual breakdown of your monthly fund allocation.</div>
+      <div class="card">
+        <div style="position:relative;">
+          <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+          <div class="donut-center">
+            <div class="donut-center-val" id="chartCenterVal">₱0</div>
+            <div class="donut-center-label">total gross</div>
+          </div>
+        </div>
+        <div class="chart-legend" id="chartLegend"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Budget vs actual spending</div>
+        <div id="expChartLegend"></div>
+        <div style="position:relative;height:220px;margin-top:12px;"><canvas id="barChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="page" id="page-history">
+      <div class="page-title">History</div>
+      <div class="page-sub">Saved monthly snapshots.</div>
+      <div style="margin-bottom:16px;">
+        <button class="save-btn" onclick="saveSnapshot()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Save this month
+        </button>
+      </div>
+      <div id="historyList"></div>
+    </div>
+
+    <!-- Export -->
+    <div class="page" id="page-export">
+      <div class="page-title">Export CSV</div>
+      <div class="page-sub">Download your full breakdown for Excel or Google Sheets.</div>
+      <div class="card">
+        <div class="card-title">Month label</div>
+        <input class="month-input" type="text" id="monthLabel" placeholder="e.g. March 2026" />
+        <div class="card-title" style="margin-bottom:12px;">What's included</div>
+        <div style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:20px;">
+          ✓ &nbsp;Monthly gross + one-time income<br>
+          ✓ &nbsp;BIR tax estimate & effective rate<br>
+          ✓ &nbsp;Net income & budget allocation<br>
+          ✓ &nbsp;All expenses by category & item<br>
+          ✓ &nbsp;Budget vs actual comparison
+        </div>
+        <button class="export-btn export-btn-primary" onclick="exportCSV()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download CSV
+        </button>
+        <div class="export-success" id="exportSuccess">✓ CSV downloaded!</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const CATS = [
+  { key:'needs',   label:'Needs',   group:'Essentials (50%)', color:'#4f8ef7', pct:50,
+    defaults:['Groceries','Rent / Mortgage','Utilities','Transportation','Medicine'] },
+  { key:'wants',   label:'Wants',   group:'Lifestyle (30%)',  color:'#f0a04a', pct:20,
+    defaults:['Dining out','Shopping','Entertainment','Subscriptions'] },
+  { key:'travel',  label:'Travel',  group:'Lifestyle (30%)',  color:'#9b7fe8', pct:10,
+    defaults:['Flights','Hotel','Activities'] },
+  { key:'savings', label:'Savings', group:'Future (20%)',     color:'#34c78a', pct:15,
+    defaults:['Emergency fund','Investments'] },
+  { key:'debts',   label:'Debts',   group:'Future (20%)',     color:'#e06eaa', pct:5,
+    defaults:['Credit card','Loan payment'] },
+];
+
+const pcts = {};
+CATS.forEach(c => pcts[c.key] = c.pct);
+
+// expenses: { needs: [{id, label, amount}], ... }
+let expenses = {};
+let expOpen = {};
+CATS.forEach(c => {
+  expenses[c.key] = c.defaults.map((d,i) => ({ id: c.key+'_'+i, label: d, amount: 0 }));
+  expOpen[c.key] = true;
+});
+
+let oneTimeItems = [];
+let donutChart = null;
+let barChart = null;
+let snapshots = JSON.parse(localStorage.getItem('pesotrack_history') || '[]');
+
+const BRACKETS = [
+  { max:20833,   fn: g => 0 },
+  { max:33332,   fn: g => (g-20833)*0.15 },
+  { max:66666,   fn: g => 1875+(g-33333)*0.20 },
+  { max:166666,  fn: g => 8541.80+(g-66667)*0.25 },
+  { max:666666,  fn: g => 33541.80+(g-166667)*0.30 },
+  { max:Infinity,fn: g => 183541.80+(g-666667)*0.35 },
+];
+const BRACKET_DISPLAY = [
+  ['Up to ₱20,833','0%'],
+  ['₱20,834 – ₱33,332','15% on excess'],
+  ['₱33,333 – ₱66,666','₱1,875 + 20%'],
+  ['₱66,667 – ₱166,666','₱8,541.80 + 25%'],
+  ['₱166,667 – ₱666,666','₱33,541.80 + 30%'],
+  ['Above ₱666,666','₱183,541.80 + 35%'],
+];
+
+function fmt(n){ return '₱'+Math.round(n).toLocaleString('en-PH'); }
+function computeTax(g){ const b=BRACKETS.find(b=>g<=b.max); return b?Math.round(b.fn(g)):0; }
+
+function getTotals(){
+  const monthly=parseFloat(document.getElementById('grossInput').value)||0;
+  const otTotal=oneTimeItems.reduce((s,i)=>s+(i.amount||0),0);
+  const totalGross=monthly+otTotal;
+  const tax=computeTax(totalGross);
+  const net=totalGross-tax;
+  return {monthly,otTotal,totalGross,tax,net};
+}
+
+function getCatBudget(catKey, net){
+  return net*(parseFloat(pcts[catKey])||0)/100;
+}
+function getCatSpent(catKey){
+  return (expenses[catKey]||[]).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+}
+
+function render(){
+  const {totalGross,tax,net}=getTotals();
+  const effRate=totalGross>0?(tax/totalGross*100):0;
+
+  // Income
+  document.getElementById('m-gross').textContent=fmt(totalGross);
+  document.getElementById('m-tax').textContent=fmt(tax);
+  document.getElementById('m-tax-pct').textContent=effRate.toFixed(1)+'% rate';
+  document.getElementById('m-net').textContent=fmt(net);
+  document.getElementById('totalGrossDisplay').textContent=fmt(totalGross);
+  document.getElementById('otEmpty').style.display=oneTimeItems.length?'none':'block';
+
+  // Tax
+  document.getElementById('t-tax').textContent=fmt(tax);
+  document.getElementById('t-rate').textContent=effRate.toFixed(2)+'%';
+  document.getElementById('t-net').textContent=fmt(net);
+  document.getElementById('t-gross').textContent=fmt(totalGross);
+  const tbody=document.getElementById('bracketBody');
+  tbody.innerHTML='';
+  BRACKET_DISPLAY.forEach((row,i)=>{
+    const active=BRACKETS[i].max>=totalGross&&(i===0||BRACKETS[i-1].max<totalGross);
+    tbody.innerHTML+=`<tr class="${active?'highlight-row':''}"><td>${row[0]}</td><td>${row[1]}</td></tr>`;
+  });
+
+  // Budget
+  const totalAllocPct=CATS.reduce((s,c)=>s+(parseFloat(pcts[c.key])||0),0);
+  const allocAmt=net*totalAllocPct/100;
+  const unalloc=net-allocAmt;
+  document.getElementById('b-net').textContent=fmt(net);
+  document.getElementById('b-alloc').textContent=fmt(allocAmt);
+  document.getElementById('b-alloc-pct').textContent=totalAllocPct.toFixed(0)+'% of net';
+  document.getElementById('b-unalloc').textContent=fmt(unalloc);
+  document.getElementById('b-unalloc-pct').textContent=(100-totalAllocPct).toFixed(0)+'% of net';
+  const groups=[
+    {label:'Essentials',pct:parseFloat(pcts.needs)||0,color:'#4f8ef7'},
+    {label:'Lifestyle',pct:(parseFloat(pcts.wants)||0)+(parseFloat(pcts.travel)||0),color:'#f0a04a'},
+    {label:'Future',pct:(parseFloat(pcts.savings)||0)+(parseFloat(pcts.debts)||0),color:'#34c78a'},
+  ];
+  document.getElementById('ruleBar').innerHTML=groups.map(g=>`<div class="rule-seg" style="flex:${Math.max(g.pct,0.01)};background:${g.color};"></div>`).join('');
+  document.getElementById('ruleLabels').innerHTML=groups.map(g=>`<span>${g.label} ${g.pct.toFixed(0)}%</span>`).join('');
+  const catList=document.getElementById('catList');
+  catList.innerHTML='';
+  CATS.forEach(c=>{
+    const p=parseFloat(pcts[c.key])||0;
+    const amt=net*p/100;
+    const div=document.createElement('div');
+    div.className='cat-row';
+    div.innerHTML=`<div class="cat-dot" style="background:${c.color};"></div><div class="cat-info"><div class="cat-name">${c.label}</div><span class="cat-badge">${c.group}</span></div><div class="cat-pct-wrap"><input class="cat-pct-input" type="number" min="0" max="100" step="1" value="${Math.round(p)}" data-key="${c.key}" /><span style="font-size:12px;color:var(--text3);">%</span></div><div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(p,100)}%;background:${c.color};"></div></div><div class="cat-amount">${fmt(amt)}</div>`;
+    catList.appendChild(div);
+  });
+  catList.querySelectorAll('.cat-pct-input').forEach(inp=>{
+    inp.addEventListener('input',function(){pcts[this.dataset.key]=parseFloat(this.value)||0;render();});
+  });
+  const warn=document.getElementById('pctWarn');
+  if(Math.abs(totalAllocPct-100)>0.5){
+    warn.style.display='block';
+    warn.textContent=totalAllocPct>100?'Over-allocated by '+(totalAllocPct-100).toFixed(1)+'%':(100-totalAllocPct).toFixed(1)+'% of net is unallocated';
+  } else { warn.style.display='none'; }
+
+  // Expenses summary
+  const totalSpent=CATS.reduce((s,c)=>s+getCatSpent(c.key),0);
+  const totalBudget=CATS.reduce((s,c)=>s+getCatBudget(c.key,net),0);
+  const remaining=totalBudget-totalSpent;
+  document.getElementById('e-total').textContent=fmt(totalSpent);
+  document.getElementById('e-total').style.color=totalSpent>totalBudget?'var(--red)':'var(--text)';
+  document.getElementById('e-budget').textContent=fmt(totalBudget);
+  document.getElementById('e-remain').textContent=fmt(Math.abs(remaining));
+  document.getElementById('e-remain').style.color=remaining<0?'var(--red)':'var(--green)';
+  document.getElementById('e-remain-pct').textContent=remaining<0?'over budget':'left to spend';
+
+  renderExpenses(net);
+  updateChart(tax,net,totalGross);
+}
+
+function renderExpenses(net){
+  if(net===undefined){const t=getTotals();net=t.net;}
+  const container=document.getElementById('expCategoryList');
+  container.innerHTML='';
+  CATS.forEach(c=>{
+    const budget=getCatBudget(c.key,net);
+    const spent=getCatSpent(c.key);
+    const pct=budget>0?Math.min(spent/budget*100,100):0;
+    const over=spent>budget;
+    const statusColor=over?'var(--red)':spent/budget>0.8?'var(--amber)':'var(--green)';
+    const isOpen=expOpen[c.key];
+
+    const wrap=document.createElement('div');
+    wrap.className='exp-category';
+    let itemsHTML='';
+    (expenses[c.key]||[]).forEach(e=>{
+      itemsHTML+=`<div class="exp-item-row">
+        <input class="exp-item-label" type="text" placeholder="Item name" value="${e.label}" data-cat="${c.key}" data-id="${e.id}" data-field="label" />
+        <span style="font-size:13px;color:var(--text3);">₱</span>
+        <input class="exp-item-amount" type="number" min="0" placeholder="0" value="${e.amount||''}" data-cat="${c.key}" data-id="${e.id}" data-field="amount" />
+        <button class="exp-item-del" data-cat="${c.key}" data-id="${e.id}">×</button>
+      </div>`;
+    });
+
+    wrap.innerHTML=`
+      <div class="exp-cat-header" data-cat="${c.key}">
+        <div class="exp-cat-dot" style="background:${c.color};"></div>
+        <div class="exp-cat-name">${c.label}</div>
+        <div class="exp-cat-status" style="background:${statusColor};"></div>
+        <div class="exp-cat-meta">
+          <div class="exp-cat-total" style="color:${over?'var(--red)':'var(--text)'}">${fmt(spent)}</div>
+          <div class="exp-cat-budget">of ${fmt(budget)} budget</div>
+        </div>
+        <span class="exp-cat-chevron${isOpen?' open':''}">▼</span>
+      </div>
+      <div class="exp-body" style="display:${isOpen?'block':'none'};">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%;background:${over?'var(--red)':c.color};"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px;margin-bottom:4px;">
+          <span>${pct.toFixed(0)}% used</span><span>${over?'Over by '+fmt(spent-budget):fmt(budget-spent)+' left'}</span>
+        </div>
+        ${itemsHTML}
+        <div class="exp-add-row">
+          <button class="add-btn" data-cat="${c.key}" onclick="addExpItem('${c.key}')">+ Add item</button>
+        </div>
+        <div class="exp-subtotal">
+          <span class="exp-subtotal-label">Subtotal</span>
+          <span class="exp-subtotal-val" style="color:${over?'var(--red)':c.color}">${fmt(spent)}</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(wrap);
+  });
+
+  // Events
+  container.querySelectorAll('.exp-cat-header').forEach(h=>{
+    h.addEventListener('click',function(){
+      const cat=this.dataset.cat;
+      expOpen[cat]=!expOpen[cat];
+      renderExpenses();
+    });
+  });
+  container.querySelectorAll('.exp-item-label,.exp-item-amount').forEach(inp=>{
+    inp.addEventListener('input',function(){
+      const cat=this.dataset.cat;
+      const item=expenses[cat].find(e=>e.id===this.dataset.id);
+      if(!item) return;
+      if(this.dataset.field==='label') item.label=this.value;
+      else item.amount=parseFloat(this.value)||0;
+      render();
+    });
+  });
+  container.querySelectorAll('.exp-item-del').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      const cat=this.dataset.cat;
+      expenses[cat]=expenses[cat].filter(e=>e.id!==this.dataset.id);
+      render();
+    });
+  });
+}
+
+function addExpItem(cat){
+  const id=cat+'_'+Date.now();
+  expenses[cat].push({id,label:'',amount:0});
+  expOpen[cat]=true;
+  render();
+  // focus last label input
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll(`[data-cat="${cat}"].exp-item-label`);
+    if(inputs.length) inputs[inputs.length-1].focus();
+  },50);
+}
+
+function updateChart(tax,net,totalGross){
+  const allData=[
+    {label:'Tax',color:'#e55a5a',val:tax},
+    ...CATS.map(c=>({label:c.label,color:c.color,val:net*(parseFloat(pcts[c.key])||0)/100}))
+  ];
+  document.getElementById('chartCenterVal').textContent=fmt(totalGross);
+  document.getElementById('chartLegend').innerHTML=allData.map(d=>`<div class="leg-item"><div class="leg-dot" style="background:${d.color};"></div><span class="leg-name">${d.label}</span><span class="leg-val">${fmt(d.val)}</span></div>`).join('');
+
+  const chartData=allData.map(d=>Math.max(d.val,0));
+  if(donutChart){donutChart.data.datasets[0].data=chartData;donutChart.update();}
+  else{
+    donutChart=new Chart(document.getElementById('donutChart'),{
+      type:'doughnut',
+      data:{labels:allData.map(d=>d.label),datasets:[{data:chartData,backgroundColor:allData.map(d=>d.color),borderWidth:0,hoverOffset:6}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}}}
+    });
+  }
+
+  // Bar chart: budget vs actual
+  const labels=CATS.map(c=>c.label);
+  const budgetData=CATS.map(c=>getCatBudget(c.key,net));
+  const spentData=CATS.map(c=>getCatSpent(c.key));
+  document.getElementById('expChartLegend').innerHTML=`<div style="display:flex;gap:16px;font-size:12px;color:var(--text2);">
+    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.4);display:inline-block;"></span>Budget</span>
+    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:2px;background:#4f8ef7;display:inline-block;"></span>Actual spent</span>
+  </div>`;
+  if(barChart){
+    barChart.data.labels=labels;
+    barChart.data.datasets[0].data=budgetData;
+    barChart.data.datasets[1].data=spentData;
+    barChart.update();
+  } else {
+    barChart=new Chart(document.getElementById('barChart'),{
+      type:'bar',
+      data:{
+        labels,
+        datasets:[
+          {label:'Budget',data:budgetData,backgroundColor:'rgba(79,142,247,0.25)',borderColor:'rgba(79,142,247,0.6)',borderWidth:1,borderRadius:4},
+          {label:'Spent', data:spentData, backgroundColor:CATS.map(c=>getCatSpent(c.key)>getCatBudget(c.key,net)?'rgba(229,90,90,0.7)':c.color+'bb'),borderColor:'transparent',borderWidth:0,borderRadius:4},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}},
+        scales:{
+          x:{ticks:{color:'#555d74',font:{size:11}},grid:{display:false}},
+          y:{ticks:{color:'#555d74',font:{size:11},callback:v=>'₱'+Number(v).toLocaleString('en-PH')},grid:{color:'rgba(255,255,255,0.04)'}}
+        }
+      }
+    });
+  }
+}
+
+function addOneTime(){
+  oneTimeItems.push({id:Date.now(),label:'',amount:0});
+  renderOTList();render();
+}
+function removeOT(id){
+  oneTimeItems=oneTimeItems.filter(i=>i.id!==id);
+  renderOTList();render();
+}
+function renderOTList(){
+  const list=document.getElementById('otList');
+  list.innerHTML='';
+  oneTimeItems.forEach(item=>{
+    const row=document.createElement('div');
+    row.className='ot-row';
+    row.innerHTML=`<input class="ot-input ot-label-input" type="text" placeholder="Label (e.g. 13th month)" value="${item.label}" data-id="${item.id}" data-field="label" /><span style="font-size:13px;color:var(--text2);">₱</span><input class="ot-input ot-amount-input" type="number" min="0" placeholder="0" value="${item.amount||''}" data-id="${item.id}" data-field="amount" /><button class="ot-del" data-id="${item.id}">×</button>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('.ot-input').forEach(inp=>{
+    inp.addEventListener('input',function(){
+      const item=oneTimeItems.find(i=>i.id==this.dataset.id);
+      if(!item) return;
+      if(this.dataset.field==='label') item.label=this.value;
+      else item.amount=parseFloat(this.value)||0;
+      render();
+    });
+  });
+  list.querySelectorAll('.ot-del').forEach(btn=>{
+    btn.addEventListener('click',function(){removeOT(parseInt(this.dataset.id));});
+  });
+}
+
+function saveSnapshot(){
+  const {totalGross,tax,net}=getTotals();
+  const label=document.getElementById('monthLabel').value||new Date().toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+  const expSnapshot={};
+  CATS.forEach(c=>{expSnapshot[c.key]=JSON.parse(JSON.stringify(expenses[c.key]));});
+  snapshots.unshift({id:Date.now(),label,totalGross,tax,net,pcts:{...pcts},expenses:expSnapshot});
+  localStorage.setItem('pesotrack_history',JSON.stringify(snapshots));
+  renderHistory();showPage('history');
+}
+function renderHistory(){
+  const list=document.getElementById('historyList');
+  if(!snapshots.length){list.innerHTML='<div class="history-empty">No snapshots saved yet.<br>Come back after setting your income and expenses.</div>';return;}
+  list.innerHTML=snapshots.map(h=>{
+    const spent=h.expenses?CATS.reduce((s,c)=>s+(h.expenses[c.key]||[]).reduce((ss,e)=>ss+(e.amount||0),0),0):0;
+    return `<div class="history-item"><div><div class="history-month">${h.label}</div><div class="history-gross" style="margin-top:2px;">Gross ${fmt(h.totalGross)} · Net ${fmt(h.net)} · Spent ${fmt(spent)}</div></div><button class="history-del" onclick="deleteSnapshot(${h.id})">×</button></div>`;
+  }).join('');
+}
+function deleteSnapshot(id){
+  snapshots=snapshots.filter(h=>h.id!==id);
+  localStorage.setItem('pesotrack_history',JSON.stringify(snapshots));
+  renderHistory();
+}
+
+function exportCSV(){
+  const {monthly,otTotal,totalGross,tax,net}=getTotals();
+  const effRate=totalGross>0?(tax/totalGross*100):0;
+  const totalAllocPct=CATS.reduce((s,c)=>s+(parseFloat(pcts[c.key])||0),0);
+  const unalloc=net*(1-totalAllocPct/100);
+  const monthLabel=document.getElementById('monthLabel').value||new Date().toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+
+  const rows=[
+    ['PesoTrack — Fund Tracker'],['Month',monthLabel],[],
+    ['INCOME'],['Item','Amount (PHP)','Notes'],
+    ['Monthly Gross Salary',monthly,''],
+    ...oneTimeItems.filter(i=>i.amount).map(i=>[i.label||'One-time income',i.amount,'One-time']),
+    ['Total Gross',totalGross,''],
+    [],['TAX (BIR TRAIN Law)'],['Item','Amount (PHP)','Notes'],
+    ['Estimated Tax',tax,effRate.toFixed(2)+'% effective rate'],
+    ['Net Income (After Tax)',net,''],
+    [],['BUDGET ALLOCATION (50/30/20)'],['Category','Group','% of Net','Budget (PHP)'],
+    ...CATS.map(c=>[c.label,c.group,parseFloat(pcts[c.key])||0,Math.round(net*(parseFloat(pcts[c.key])||0)/100)]),
+    ['Unallocated','-',(100-totalAllocPct).toFixed(1),Math.round(unalloc)],
+  ];
+
+  CATS.forEach(c=>{
+    const budget=getCatBudget(c.key,net);
+    const spent=getCatSpent(c.key);
+    rows.push([]);
+    rows.push([`EXPENSES — ${c.label.toUpperCase()}`]);
+    rows.push(['Item','Amount (PHP)']);
+    (expenses[c.key]||[]).forEach(e=>{if(e.amount||e.label) rows.push([e.label||'(unnamed)',e.amount||0]);});
+    rows.push(['Subtotal',spent]);
+    rows.push(['Budget',Math.round(budget)]);
+    rows.push([spent>budget?'Over by':'Remaining',Math.abs(budget-spent)]);
+  });
+
+  rows.push([]);rows.push(['SUMMARY']);
+  rows.push(['Total Gross',totalGross]);rows.push(['Tax',tax]);rows.push(['Net Income',net]);
+  const totalSpent=CATS.reduce((s,c)=>s+getCatSpent(c.key),0);
+  rows.push(['Total Budget',Math.round(net*totalAllocPct/100)]);
+  rows.push(['Total Spent',totalSpent]);
+  rows.push([totalSpent>net*totalAllocPct/100?'Over by':'Remaining',Math.abs(net*totalAllocPct/100-totalSpent)]);
+
+  const csv=rows.map(r=>r.map(c=>{const s=String(c==null?'':c);return s.includes(',')||s.includes('"')?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='pesotrack-'+monthLabel.replace(/\s+/g,'-').toLowerCase()+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  const msg=document.getElementById('exportSuccess');msg.style.display='block';
+  setTimeout(()=>msg.style.display='none',3000);
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelector(`.nav-item[onclick="showPage('${name}')"]`).classList.add('active');
+  closeSidebar();
+  if(name==='chart'){setTimeout(()=>{const t=getTotals();updateChart(t.tax,t.net,t.totalGross);},50);}
+  if(name==='history') renderHistory();
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+
+document.getElementById('grossInput').addEventListener('input',render);
+document.getElementById('monthLabel').value=new Date().toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+
+render();
+renderHistory();
+</script>
+</body>
+</html>
