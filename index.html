@@ -116,6 +116,9 @@
   .tax-stat{background:var(--bg3);border-radius:var(--radius-sm);padding:14px 16px;}
   .tax-stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;}
   .tax-stat-value{font-size:18px;font-weight:600;color:var(--text);}
+  .tax-type-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;cursor:pointer;text-align:center;transition:all 0.15s;color:var(--text);}
+  .tax-type-btn:hover{border-color:var(--border2);background:var(--bg2);}
+  .tax-type-btn.active{border-color:var(--accent);background:rgba(79,142,247,0.08);}
 
   /* Chart */
   .chart-wrap{position:relative;height:280px;margin:8px 0;}
@@ -263,23 +266,64 @@
     <!-- Tax -->
     <div class="page" id="page-tax">
       <div class="page-title">Tax (BIR)</div>
-      <div class="page-sub">Philippine TRAIN Law income tax brackets.</div>
+      <div class="page-sub">Philippine TRAIN Law — select your employment type.</div>
+
+      <!-- Type selector -->
+      <div class="card" style="padding:16px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">I am a…</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="taxTypeSelector">
+          <div class="tax-type-btn active" id="btn-employee" onclick="setTaxType('employee')">
+            <div style="font-size:20px;margin-bottom:6px;">👔</div>
+            <div style="font-size:13px;font-weight:600;">Regular Employee</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">Withholding tax via employer</div>
+          </div>
+          <div class="tax-type-btn" id="btn-freelancer" onclick="setTaxType('freelancer')">
+            <div style="font-size:20px;margin-bottom:6px;">💻</div>
+            <div style="font-size:13px;font-weight:600;">Freelancer / Self-Employed</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">File your own taxes with BIR</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Freelancer sub-option -->
+      <div class="card" id="freelancerOptionCard" style="display:none;padding:16px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">Tax option</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="tax-type-btn active" id="btn-flat8" onclick="setFreelancerOption('flat8')">
+            <div style="font-size:18px;margin-bottom:6px;">8%</div>
+            <div style="font-size:13px;font-weight:600;">Flat 8% Tax</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">Simple · annual income ≤ ₱3M</div>
+          </div>
+          <div class="tax-type-btn" id="btn-graduated" onclick="setFreelancerOption('graduated')">
+            <div style="font-size:18px;margin-bottom:6px;">📊</div>
+            <div style="font-size:13px;font-weight:600;">Graduated + 3%</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">Progressive rates + percentage tax</div>
+          </div>
+        </div>
+        <div id="freelancerNote" style="font-size:12px;color:var(--text3);margin-top:12px;line-height:1.6;padding:10px 12px;background:var(--bg3);border-radius:var(--radius-sm);"></div>
+      </div>
+
+      <!-- Bracket table -->
       <div class="card">
-        <div class="card-title">Monthly brackets</div>
+        <div class="card-title" id="bracketTableTitle">Annual income brackets</div>
         <table class="bracket-table">
-          <thead><tr><th>Monthly gross</th><th style="text-align:right">Tax</th></tr></thead>
+          <thead><tr><th id="bracketColHeader">Annual income</th><th style="text-align:right">Tax</th></tr></thead>
           <tbody id="bracketBody"></tbody>
         </table>
       </div>
+
+      <!-- Your estimate -->
       <div class="card">
         <div class="card-title">Your estimate</div>
         <div class="tax-summary">
-          <div class="tax-stat"><div class="tax-stat-label">Estimated Tax</div><div class="tax-stat-value" id="t-tax">₱0</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Annual Gross</div><div class="tax-stat-value" id="t-gross">₱0</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Est. Annual Tax</div><div class="tax-stat-value" id="t-tax">₱0</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Monthly Tax</div><div class="tax-stat-value" id="t-monthlytax">₱0</div></div>
           <div class="tax-stat"><div class="tax-stat-label">Effective Rate</div><div class="tax-stat-value" id="t-rate">0%</div></div>
-          <div class="tax-stat"><div class="tax-stat-label">Net Take-home</div><div class="tax-stat-value" id="t-net">₱0</div></div>
-          <div class="tax-stat"><div class="tax-stat-label">Monthly Gross</div><div class="tax-stat-value" id="t-gross">₱0</div></div>
+          <div class="tax-stat"><div class="tax-stat-label">Monthly Net</div><div class="tax-stat-value" id="t-net">₱0</div></div>
+          <div class="tax-stat" id="t-addtax-card" style="display:none;"><div class="tax-stat-label" id="t-addtax-label">Add'l Tax</div><div class="tax-stat-value" id="t-addtax">₱0</div></div>
         </div>
-        <p style="font-size:12px;color:var(--text3);margin-top:14px;line-height:1.6;">Estimate only. SSS (~₱1,125), PhilHealth (~1%), and Pag-IBIG (₱100) deductions reduce taxable income before tax is applied.</p>
+        <p id="taxDisclaimer" style="font-size:12px;color:var(--text3);margin-top:14px;line-height:1.6;"></p>
       </div>
     </div>
 
@@ -444,25 +488,106 @@ let barChart = null;
 let snapshots = JSON.parse(localStorage.getItem('pesotrack_history') || '[]');
 let exportLog = JSON.parse(localStorage.getItem('pesotrack_exportlog') || '[]');
 
-const BRACKETS = [
-  { max:20833,   fn: g => 0 },
-  { max:33332,   fn: g => (g-20833)*0.15 },
-  { max:66666,   fn: g => 1875+(g-33333)*0.20 },
-  { max:166666,  fn: g => 8541.80+(g-66667)*0.25 },
-  { max:666666,  fn: g => 33541.80+(g-166667)*0.30 },
-  { max:Infinity,fn: g => 183541.80+(g-666667)*0.35 },
-];
-const BRACKET_DISPLAY = [
-  ['Up to ₱20,833','0%'],
-  ['₱20,834 – ₱33,332','15% on excess'],
-  ['₱33,333 – ₱66,666','₱1,875 + 20%'],
-  ['₱66,667 – ₱166,666','₱8,541.80 + 25%'],
-  ['₱166,667 – ₱666,666','₱33,541.80 + 30%'],
-  ['Above ₱666,666','₱183,541.80 + 35%'],
+// ── Tax state ──
+let taxType = 'employee';        // 'employee' | 'freelancer'
+let freelancerOption = 'flat8';  // 'flat8' | 'graduated'
+
+// Annual graduated brackets (TRAIN Law — correct)
+const ANNUAL_BRACKETS = [
+  { max: 250000,    fn: a => 0,                                    label: 'Up to ₱250,000',               rate: '0%' },
+  { max: 400000,    fn: a => (a-250000)*0.15,                      label: '₱250,001 – ₱400,000',          rate: '15% on excess over ₱250,000' },
+  { max: 800000,    fn: a => 22500+(a-400000)*0.20,                label: '₱400,001 – ₱800,000',          rate: '₱22,500 + 20% on excess over ₱400,000' },
+  { max: 2000000,   fn: a => 102500+(a-800000)*0.25,               label: '₱800,001 – ₱2,000,000',        rate: '₱102,500 + 25% on excess over ₱800,000' },
+  { max: 8000000,   fn: a => 402500+(a-2000000)*0.30,              label: '₱2,000,001 – ₱8,000,000',      rate: '₱402,500 + 30% on excess over ₱2,000,000' },
+  { max: Infinity,  fn: a => 2202500+(a-8000000)*0.35,             label: 'Above ₱8,000,000',              rate: '₱2,202,500 + 35% on excess over ₱8,000,000' },
 ];
 
+function computeGraduatedAnnual(annualGross) {
+  const b = ANNUAL_BRACKETS.find(b => annualGross <= b.max);
+  return b ? Math.round(b.fn(annualGross)) : 0;
+}
+
+function computeTax(monthlyGross) {
+  const annual = monthlyGross * 12;
+  if (taxType === 'employee') {
+    return Math.round(computeGraduatedAnnual(annual) / 12);
+  } else {
+    if (freelancerOption === 'flat8') {
+      return Math.round(annual * 0.08 / 12);
+    } else {
+      // graduated + 3% percentage tax
+      const incomeTax = computeGraduatedAnnual(annual);
+      const percentageTax = annual <= 3000000 ? annual * 0.03 : 0;
+      return Math.round((incomeTax + percentageTax) / 12);
+    }
+  }
+}
+
+function setTaxType(type) {
+  taxType = type;
+  document.getElementById('btn-employee').classList.toggle('active', type === 'employee');
+  document.getElementById('btn-freelancer').classList.toggle('active', type === 'freelancer');
+  document.getElementById('freelancerOptionCard').style.display = type === 'freelancer' ? 'block' : 'none';
+  render();
+}
+
+function setFreelancerOption(opt) {
+  freelancerOption = opt;
+  document.getElementById('btn-flat8').classList.toggle('active', opt === 'flat8');
+  document.getElementById('btn-graduated').classList.toggle('active', opt === 'graduated');
+  render();
+}
+
+function renderTaxPage(totalGross) {
+  const annual = totalGross * 12;
+  const tbody = document.getElementById('bracketBody');
+  tbody.innerHTML = '';
+
+  if (taxType === 'employee' || (taxType === 'freelancer' && freelancerOption === 'graduated')) {
+    document.getElementById('bracketColHeader').textContent = 'Annual income';
+    document.getElementById('bracketTableTitle').textContent = 'Annual income brackets (TRAIN Law)';
+    ANNUAL_BRACKETS.forEach((b, i) => {
+      const active = annual <= b.max && (i === 0 || annual > ANNUAL_BRACKETS[i-1].max);
+      tbody.innerHTML += `<tr class="${active ? 'highlight-row' : ''}"><td>${b.label}</td><td>${b.rate}</td></tr>`;
+    });
+  } else if (taxType === 'freelancer' && freelancerOption === 'flat8') {
+    document.getElementById('bracketColHeader').textContent = 'Condition';
+    document.getElementById('bracketTableTitle').textContent = '8% Flat tax option';
+    tbody.innerHTML = `
+      <tr class="${annual <= 3000000 ? 'highlight-row' : ''}"><td>Annual gross ≤ ₱3,000,000</td><td>8% of gross income</td></tr>
+      <tr class="${annual > 3000000 ? 'highlight-row' : ''}"><td>Annual gross > ₱3,000,000</td><td>Must use graduated + 12% VAT</td></tr>`;
+  }
+
+  // Additional taxes note for freelancer
+  const addCard = document.getElementById('t-addtax-card');
+  const note = document.getElementById('freelancerNote');
+  if (taxType === 'freelancer') {
+    if (freelancerOption === 'flat8') {
+      note.textContent = '8% flat covers both income tax and business tax. No deductions needed. Only available if annual gross ≤ ₱3,000,000.';
+      addCard.style.display = 'none';
+    } else {
+      const pctTax = annual <= 3000000 ? Math.round(annual * 0.03 / 12) : 0;
+      document.getElementById('t-addtax-label').textContent = annual <= 3000000 ? '3% % Tax / mo' : '12% VAT applies';
+      document.getElementById('t-addtax').textContent = annual <= 3000000 ? fmt(pctTax) : 'See BIR';
+      addCard.style.display = 'block';
+      note.textContent = annual <= 3000000
+        ? 'Graduated income tax + 3% Percentage Tax (since annual gross ≤ ₱3M). You may deduct business expenses to reduce taxable income.'
+        : 'Annual gross exceeds ₱3M. You must register for VAT (12%) instead of the 3% percentage tax.';
+    }
+  } else {
+    addCard.style.display = 'none';
+  }
+
+  // Disclaimer
+  const disc = document.getElementById('taxDisclaimer');
+  if (taxType === 'employee') {
+    disc.textContent = 'Estimate only. Mandatory deductions (SSS ~₱1,125, PhilHealth ~1%, Pag-IBIG ₱100) reduce taxable income before the graduated tax is applied by your employer.';
+  } else {
+    disc.textContent = 'Estimate only. Consult a CPA or the BIR for accurate filing. Self-employed individuals file via BIR Form 1701 (annual) or 1701Q (quarterly).';
+  }
+}
+
 function fmt(n){ return '₱'+Math.round(n).toLocaleString('en-PH'); }
-function computeTax(g){ const b=BRACKETS.find(b=>g<=b.max); return b?Math.round(b.fn(g)):0; }
 
 function getTotals(){
   const monthly=parseFloat(document.getElementById('grossInput').value)||0;
@@ -492,17 +617,15 @@ function render(){
   document.getElementById('totalGrossDisplay').textContent=fmt(totalGross);
   document.getElementById('otEmpty').style.display=oneTimeItems.length?'none':'block';
 
-  // Tax
-  document.getElementById('t-tax').textContent=fmt(tax);
-  document.getElementById('t-rate').textContent=effRate.toFixed(2)+'%';
-  document.getElementById('t-net').textContent=fmt(net);
-  document.getElementById('t-gross').textContent=fmt(totalGross);
-  const tbody=document.getElementById('bracketBody');
-  tbody.innerHTML='';
-  BRACKET_DISPLAY.forEach((row,i)=>{
-    const active=BRACKETS[i].max>=totalGross&&(i===0||BRACKETS[i-1].max<totalGross);
-    tbody.innerHTML+=`<tr class="${active?'highlight-row':''}"><td>${row[0]}</td><td>${row[1]}</td></tr>`;
-  });
+  // Tax page
+  const annualTax = computeGraduatedAnnual(totalGross*12);
+  const monthlyTax = computeTax(totalGross);
+  document.getElementById('t-gross').textContent=fmt(totalGross*12);
+  document.getElementById('t-tax').textContent=fmt(monthlyTax*12);
+  document.getElementById('t-monthlytax').textContent=fmt(monthlyTax);
+  document.getElementById('t-rate').textContent=totalGross>0?(monthlyTax/totalGross*100).toFixed(2)+'%':'0%';
+  document.getElementById('t-net').textContent=fmt(totalGross-monthlyTax);
+  renderTaxPage(totalGross);
 
   // Budget
   const totalAllocPct=CATS.reduce((s,c)=>s+(parseFloat(pcts[c.key])||0),0);
