@@ -133,8 +133,8 @@
   .history-item{display:flex;align-items:center;gap:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:10px;}
   .history-month{font-weight:600;font-size:14px;flex:1;}
   .history-gross{font-size:13px;color:var(--text2);}
-  .history-del{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(229,90,90,0.1);border:1px solid rgba(229,90,90,0.25);border-radius:6px;cursor:pointer;color:var(--red);font-size:12px;font-weight:500;padding:6px 12px;transition:all 0.15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
-  .history-del:hover{background:rgba(229,90,90,0.22);border-color:rgba(229,90,90,0.5);}
+  .history-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;transition:color 0.15s;}
+  .history-del:hover{color:var(--red);}
   .save-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
   .save-btn:hover{background:var(--bg3);color:var(--text);}
 
@@ -145,18 +145,6 @@
   .export-btn-primary{background:var(--accent);color:#fff;}
   .export-btn-primary:hover{background:var(--accent2);}
   .export-success{font-size:13px;color:var(--green);text-align:center;margin-top:10px;display:none;}
-
-  /* Export history section */
-  .export-history-item{display:flex;align-items:center;gap:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;}
-  .export-history-info{flex:1;min-width:0;}
-  .export-history-month{font-weight:600;font-size:13px;color:var(--text);}
-  .export-history-meta{font-size:11px;color:var(--text3);margin-top:2px;}
-  .export-history-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
-  .export-history-csv{display:flex;align-items:center;gap:5px;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.25);border-radius:6px;cursor:pointer;color:var(--accent);font-size:11px;font-weight:500;padding:5px 10px;transition:all 0.15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
-  .export-history-csv:hover{background:rgba(79,142,247,0.2);border-color:rgba(79,142,247,0.5);}
-  .export-history-del{display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(229,90,90,0.1);border:1px solid rgba(229,90,90,0.25);border-radius:6px;cursor:pointer;color:var(--red);font-size:11px;font-weight:500;padding:5px 10px;transition:all 0.15s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
-  .export-history-del:hover{background:rgba(229,90,90,0.22);border-color:rgba(229,90,90,0.5);}
-  .export-history-empty{text-align:center;padding:28px 0;color:var(--text3);font-size:13px;}
 
   .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;}
   @media(max-width:720px){
@@ -320,10 +308,14 @@
     <div class="page" id="page-history">
       <div class="page-title">History</div>
       <div class="page-sub">Saved monthly snapshots.</div>
-      <div style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
         <button class="save-btn" onclick="saveSnapshot()">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           Save this month
+        </button>
+        <button class="save-btn" id="clearAllBtn" onclick="clearAllSnapshots()" style="border-color:rgba(229,90,90,0.3);color:var(--red);display:none;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Delete all
         </button>
       </div>
       <div id="historyList"></div>
@@ -339,9 +331,9 @@
         <div class="card-title" style="margin-bottom:12px;">What's included</div>
         <div style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:20px;">
           ✓ &nbsp;Monthly gross + one-time income<br>
-          ✓ &nbsp;BIR tax estimate &amp; effective rate<br>
-          ✓ &nbsp;Net income &amp; budget allocation<br>
-          ✓ &nbsp;All expenses by category &amp; item<br>
+          ✓ &nbsp;BIR tax estimate & effective rate<br>
+          ✓ &nbsp;Net income & budget allocation<br>
+          ✓ &nbsp;All expenses by category & item<br>
           ✓ &nbsp;Budget vs actual comparison
         </div>
         <button class="export-btn export-btn-primary" onclick="exportCSV()">
@@ -351,13 +343,15 @@
         <div class="export-success" id="exportSuccess">✓ CSV downloaded!</div>
       </div>
 
-      <!-- Saved snapshots on Export page -->
-      <div class="card">
+      <div class="card" id="exportHistoryCard" style="display:none;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div class="card-title" style="margin:0;">Saved Snapshots</div>
-          <button class="add-btn" onclick="showPage('history')" style="font-size:11px;">View all in History →</button>
+          <div class="card-title" style="margin:0;">Downloaded exports</div>
+          <button class="save-btn" onclick="clearExportLog()" style="border-color:rgba(229,90,90,0.3);color:var(--red);font-size:11px;padding:4px 12px;">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Delete all
+          </button>
         </div>
-        <div id="exportHistoryList"></div>
+        <div id="exportLogList"></div>
       </div>
     </div>
 
@@ -381,6 +375,7 @@ const CATS = [
 const pcts = {};
 CATS.forEach(c => pcts[c.key] = c.pct);
 
+// expenses: { needs: [{id, label, amount}], ... }
 let expenses = {};
 let expOpen = {};
 CATS.forEach(c => {
@@ -392,6 +387,7 @@ let oneTimeItems = [];
 let donutChart = null;
 let barChart = null;
 let snapshots = JSON.parse(localStorage.getItem('pesotrack_history') || '[]');
+let exportLog = JSON.parse(localStorage.getItem('pesotrack_exportlog') || '[]');
 
 const BRACKETS = [
   { max:20833,   fn: g => 0 },
@@ -556,6 +552,7 @@ function renderExpenses(net){
     container.appendChild(wrap);
   });
 
+  // Events
   container.querySelectorAll('.exp-cat-header').forEach(h=>{
     h.addEventListener('click',function(){
       const cat=this.dataset.cat;
@@ -587,6 +584,7 @@ function addExpItem(cat){
   expenses[cat].push({id,label:'',amount:0});
   expOpen[cat]=true;
   render();
+  // focus last label input
   setTimeout(()=>{
     const inputs=document.querySelectorAll(`[data-cat="${cat}"].exp-item-label`);
     if(inputs.length) inputs[inputs.length-1].focus();
@@ -611,6 +609,7 @@ function updateChart(tax,net,totalGross){
     });
   }
 
+  // Bar chart: budget vs actual
   const labels=CATS.map(c=>c.label);
   const budgetData=CATS.map(c=>getCatBudget(c.key,net));
   const spentData=CATS.map(c=>getCatSpent(c.key));
@@ -630,7 +629,7 @@ function updateChart(tax,net,totalGross){
         labels,
         datasets:[
           {label:'Budget',data:budgetData,backgroundColor:'rgba(79,142,247,0.25)',borderColor:'rgba(79,142,247,0.6)',borderWidth:1,borderRadius:4},
-          {label:'Spent', data:spentData, backgroundColor:CATS.map(c=>getCatSpent(c.key)>getCatBudget(c.key,getTotals().net)?'rgba(229,90,90,0.7)':c.color+'bb'),borderColor:'transparent',borderWidth:0,borderRadius:4},
+          {label:'Spent', data:spentData, backgroundColor:CATS.map(c=>getCatSpent(c.key)>getCatBudget(c.key,net)?'rgba(229,90,90,0.7)':c.color+'bb'),borderColor:'transparent',borderWidth:0,borderRadius:4},
         ]
       },
       options:{
@@ -683,119 +682,40 @@ function saveSnapshot(){
   CATS.forEach(c=>{expSnapshot[c.key]=JSON.parse(JSON.stringify(expenses[c.key]));});
   snapshots.unshift({id:Date.now(),label,totalGross,tax,net,pcts:{...pcts},expenses:expSnapshot});
   localStorage.setItem('pesotrack_history',JSON.stringify(snapshots));
-  renderHistory();
-  renderExportHistory();
-  showPage('history');
+  renderHistory();showPage('history');
 }
-
 function renderHistory(){
   const list=document.getElementById('historyList');
+  const clearBtn=document.getElementById('clearAllBtn');
   if(!snapshots.length){
     list.innerHTML='<div class="history-empty">No snapshots saved yet.<br>Come back after setting your income and expenses.</div>';
+    clearBtn.style.display='none';
     return;
   }
+  clearBtn.style.display='flex';
   list.innerHTML=snapshots.map(h=>{
     const spent=h.expenses?CATS.reduce((s,c)=>s+(h.expenses[c.key]||[]).reduce((ss,e)=>ss+(e.amount||0),0),0):0;
     return `<div class="history-item">
       <div style="flex:1;min-width:0;">
         <div class="history-month">${h.label}</div>
-        <div class="history-gross" style="margin-top:2px;">Gross ${fmt(h.totalGross)} · Net ${fmt(h.net)} · Spent ${fmt(spent)}</div>
+        <div class="history-gross" style="margin-top:2px;">Gross ${fmt(h.totalGross)} &middot; Net ${fmt(h.net)} &middot; Spent ${fmt(spent)}</div>
       </div>
-      <button class="history-del" onclick="deleteSnapshot(${h.id})">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        Delete
+      <button class="history-del" title="Delete this snapshot" onclick="deleteSnapshot(${h.id})">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M5 4V3a1 1 0 011-1h2a1 1 0 011 1v1M6 7v3M8 7v3M3 4l.8 7.2A1 1 0 004.8 12h4.4a1 1 0 001-.8L11 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>`;
   }).join('');
 }
-
-function renderExportHistory(){
-  const list=document.getElementById('exportHistoryList');
-  if(!list) return;
-  if(!snapshots.length){
-    list.innerHTML='<div class="export-history-empty">No snapshots saved yet. Save a month from the History page.</div>';
-    return;
-  }
-  list.innerHTML=snapshots.map(h=>{
-    const spent=h.expenses?CATS.reduce((s,c)=>s+(h.expenses[c.key]||[]).reduce((ss,e)=>ss+(e.amount||0),0),0):0;
-    return `<div class="export-history-item">
-      <div class="export-history-info">
-        <div class="export-history-month">${h.label}</div>
-        <div class="export-history-meta">Gross ${fmt(h.totalGross)} · Net ${fmt(h.net)} · Spent ${fmt(spent)}</div>
-      </div>
-      <div class="export-history-actions">
-        <button class="export-history-csv" onclick="exportSnapshotCSV(${h.id})">
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v6M3 5l2.5 2.5L8 5M1 8.5v1a.5.5 0 00.5.5h8a.5.5 0 00.5-.5v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Export
-        </button>
-        <button class="export-history-del" onclick="deleteSnapshotFromExport(${h.id})">
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 1.5l8 8M9.5 1.5l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          Delete
-        </button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
 function deleteSnapshot(id){
   snapshots=snapshots.filter(h=>h.id!==id);
   localStorage.setItem('pesotrack_history',JSON.stringify(snapshots));
   renderHistory();
-  renderExportHistory();
 }
-
-function deleteSnapshotFromExport(id){
-  snapshots=snapshots.filter(h=>h.id!==id);
+function clearAllSnapshots(){
+  if(!confirm('Delete all saved history? This cannot be undone.')) return;
+  snapshots=[];
   localStorage.setItem('pesotrack_history',JSON.stringify(snapshots));
-  renderExportHistory();
   renderHistory();
-}
-
-function exportSnapshotCSV(id){
-  const h=snapshots.find(s=>s.id===id);
-  if(!h) return;
-  const net=h.net;
-  const totalAllocPct=CATS.reduce((s,c)=>s+(parseFloat(h.pcts[c.key])||0),0);
-  const unalloc=net*(1-totalAllocPct/100);
-  const effRate=h.totalGross>0?(h.tax/h.totalGross*100):0;
-
-  const rows=[
-    ['PesoTrack — Fund Tracker'],['Month',h.label],[],
-    ['INCOME'],['Item','Amount (PHP)','Notes'],
-    ['Total Gross',h.totalGross,'Snapshot'],
-    [],['TAX (BIR TRAIN Law)'],['Item','Amount (PHP)','Notes'],
-    ['Estimated Tax',h.tax,effRate.toFixed(2)+'% effective rate'],
-    ['Net Income (After Tax)',h.net,''],
-    [],['BUDGET ALLOCATION'],['Category','Group','% of Net','Budget (PHP)'],
-    ...CATS.map(c=>[c.label,c.group,parseFloat(h.pcts[c.key])||0,Math.round(h.net*(parseFloat(h.pcts[c.key])||0)/100)]),
-    ['Unallocated','-',(100-totalAllocPct).toFixed(1),Math.round(unalloc)],
-  ];
-
-  CATS.forEach(c=>{
-    const budget=Math.round(h.net*(parseFloat(h.pcts[c.key])||0)/100);
-    const spent=(h.expenses[c.key]||[]).reduce((s,e)=>s+(e.amount||0),0);
-    rows.push([]);
-    rows.push([`EXPENSES — ${c.label.toUpperCase()}`]);
-    rows.push(['Item','Amount (PHP)']);
-    (h.expenses[c.key]||[]).forEach(e=>{if(e.amount||e.label) rows.push([e.label||'(unnamed)',e.amount||0]);});
-    rows.push(['Subtotal',spent]);
-    rows.push(['Budget',budget]);
-    rows.push([spent>budget?'Over by':'Remaining',Math.abs(budget-spent)]);
-  });
-
-  const totalSpent=CATS.reduce((s,c)=>s+(h.expenses[c.key]||[]).reduce((ss,e)=>ss+(e.amount||0),0),0);
-  rows.push([]);rows.push(['SUMMARY']);
-  rows.push(['Total Gross',h.totalGross]);rows.push(['Tax',h.tax]);rows.push(['Net Income',h.net]);
-  rows.push(['Total Budget',Math.round(h.net*totalAllocPct/100)]);
-  rows.push(['Total Spent',totalSpent]);
-  rows.push([totalSpent>h.net*totalAllocPct/100?'Over by':'Remaining',Math.abs(h.net*totalAllocPct/100-totalSpent)]);
-
-  const csv=rows.map(r=>r.map(c=>{const s=String(c==null?'':c);return s.includes(',')||s.includes('"')?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='pesotrack-'+h.label.replace(/\s+/g,'-').toLowerCase()+'.csv';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
 function exportCSV(){
@@ -842,10 +762,45 @@ function exportCSV(){
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download='pesotrack-'+monthLabel.replace(/\s+/g,'-').toLowerCase()+'.csv';
+  const filename='pesotrack-'+monthLabel.replace(/\s+/g,'-').toLowerCase()+'.csv';
+  a.href=url;a.download=filename;
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+
+  // Log the export
+  exportLog.unshift({id:Date.now(),label:monthLabel,filename,gross:totalGross,net,date:new Date().toLocaleString('en-PH')});
+  localStorage.setItem('pesotrack_exportlog',JSON.stringify(exportLog));
+  renderExportLog();
+
   const msg=document.getElementById('exportSuccess');msg.style.display='block';
   setTimeout(()=>msg.style.display='none',3000);
+}
+
+function renderExportLog(){
+  const card=document.getElementById('exportHistoryCard');
+  const list=document.getElementById('exportLogList');
+  if(!exportLog.length){ card.style.display='none'; return; }
+  card.style.display='block';
+  list.innerHTML=exportLog.map(e=>`
+    <div class="history-item">
+      <div style="flex:1;min-width:0;">
+        <div class="history-month" style="font-size:13px;">${e.label}</div>
+        <div class="history-gross" style="margin-top:2px;">${e.filename} &middot; ${e.date}</div>
+      </div>
+      <button class="history-del" title="Remove from log" onclick="deleteExportLog(${e.id})">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M5 4V3a1 1 0 011-1h2a1 1 0 011 1v1M6 7v3M8 7v3M3 4l.8 7.2A1 1 0 004.8 12h4.4a1 1 0 001-.8L11 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>`).join('');
+}
+function deleteExportLog(id){
+  exportLog=exportLog.filter(e=>e.id!==id);
+  localStorage.setItem('pesotrack_exportlog',JSON.stringify(exportLog));
+  renderExportLog();
+}
+function clearExportLog(){
+  if(!confirm('Delete all export log entries? This cannot be undone.')) return;
+  exportLog=[];
+  localStorage.setItem('pesotrack_exportlog',JSON.stringify(exportLog));
+  renderExportLog();
 }
 
 function showPage(name){
@@ -856,7 +811,7 @@ function showPage(name){
   closeSidebar();
   if(name==='chart'){setTimeout(()=>{const t=getTotals();updateChart(t.tax,t.net,t.totalGross);},50);}
   if(name==='history') renderHistory();
-  if(name==='export') renderExportHistory();
+  if(name==='export') renderExportLog();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
@@ -866,7 +821,7 @@ document.getElementById('monthLabel').value=new Date().toLocaleDateString('en-PH
 
 render();
 renderHistory();
-renderExportHistory();
+renderExportLog();
 </script>
 </body>
 </html>
