@@ -207,11 +207,46 @@
     <div class="page active" id="page-income">
       <div class="page-title">Income</div>
       <div class="page-sub">Enter your monthly salary and any one-time earnings.</div>
+
+      <!-- Employment type selector -->
+      <div class="card" style="padding:16px 20px;">
+        <div class="card-title" style="margin-bottom:12px;">I am a…</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="tax-type-btn active" id="inc-btn-employee" onclick="setTaxType('employee')">
+            <div style="font-size:18px;margin-bottom:5px;">👔</div>
+            <div style="font-size:13px;font-weight:600;">Regular Employee</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">Withholding tax via employer</div>
+          </div>
+          <div class="tax-type-btn" id="inc-btn-freelancer" onclick="setTaxType('freelancer')">
+            <div style="font-size:18px;margin-bottom:5px;">💻</div>
+            <div style="font-size:13px;font-weight:600;">Freelancer / Self-Employed</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">File your own taxes with BIR</div>
+          </div>
+        </div>
+        <!-- Freelancer sub-option inline -->
+        <div id="inc-freelancerOptionRow" style="display:none;margin-top:10px;display:none;">
+          <div class="card-title" style="margin:10px 0 8px;">Tax option</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="tax-type-btn active" id="inc-btn-flat8" onclick="setFreelancerOption('flat8')">
+              <div style="font-size:16px;margin-bottom:4px;">8%</div>
+              <div style="font-size:12px;font-weight:600;">Flat 8% Tax</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px;">Simple · annual ≤ ₱3M</div>
+            </div>
+            <div class="tax-type-btn" id="inc-btn-graduated" onclick="setFreelancerOption('graduated')">
+              <div style="font-size:16px;margin-bottom:4px;">📊</div>
+              <div style="font-size:12px;font-weight:600;">Graduated + 3%</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px;">Progressive + % tax</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="metric-grid">
         <div class="metric-card"><div class="metric-label">Total Gross</div><div class="metric-value" id="m-gross">₱0</div></div>
         <div class="metric-card"><div class="metric-label">Tax (BIR)</div><div class="metric-value" id="m-tax" style="color:var(--red)">₱0</div><div class="metric-sub" id="m-tax-pct">0% rate</div></div>
         <div class="metric-card"><div class="metric-label">Net Income</div><div class="metric-value" id="m-net" style="color:var(--green)">₱0</div></div>
       </div>
+
       <div class="card">
         <div class="card-title">Monthly Salary</div>
         <div class="income-row">
@@ -228,7 +263,7 @@
         <div id="otEmpty" style="font-size:13px;color:var(--text3);padding:8px 0;">No one-time income added yet.</div>
         <div class="total-row">
           <span class="total-label">Total gross this month</span>
-          <span class="total-value" id="totalGrossDisplay">₱50,000</span>
+          <span class="total-value" id="totalGrossDisplay">₱0</span>
         </div>
       </div>
     </div>
@@ -525,16 +560,28 @@ function computeTax(monthlyGross) {
 
 function setTaxType(type) {
   taxType = type;
-  document.getElementById('btn-employee').classList.toggle('active', type === 'employee');
-  document.getElementById('btn-freelancer').classList.toggle('active', type === 'freelancer');
-  document.getElementById('freelancerOptionCard').style.display = type === 'freelancer' ? 'block' : 'none';
+  // sync both pages
+  ['btn-employee','btn-freelancer','inc-btn-employee','inc-btn-freelancer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isEmployee = id.includes('employee');
+    el.classList.toggle('active', type === 'employee' ? isEmployee : !isEmployee);
+  });
+  const taxFLRow = document.getElementById('freelancerOptionCard');
+  const incFLRow = document.getElementById('inc-freelancerOptionRow');
+  if (taxFLRow) taxFLRow.style.display = type === 'freelancer' ? 'block' : 'none';
+  if (incFLRow) incFLRow.style.display = type === 'freelancer' ? 'block' : 'none';
   render();
 }
 
 function setFreelancerOption(opt) {
   freelancerOption = opt;
-  document.getElementById('btn-flat8').classList.toggle('active', opt === 'flat8');
-  document.getElementById('btn-graduated').classList.toggle('active', opt === 'graduated');
+  ['btn-flat8','btn-graduated','inc-btn-flat8','inc-btn-graduated'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isFlat = id.includes('flat8');
+    el.classList.toggle('active', opt === 'flat8' ? isFlat : !isFlat);
+  });
   render();
 }
 
@@ -1034,4 +1081,3 @@ renderExportLog();
 </script>
 </body>
 </html>
-
