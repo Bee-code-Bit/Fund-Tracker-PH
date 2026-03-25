@@ -327,7 +327,17 @@
       <div class="page-sub">Download your full breakdown for Excel or Google Sheets.</div>
       <div class="card">
         <div class="card-title">Month label</div>
-        <input class="month-input" type="text" id="monthLabel" placeholder="e.g. March 2026" />
+        <div style="position:relative;margin-bottom:16px;">
+          <input type="text" id="monthLabel" placeholder="e.g. March 2026"
+            style="width:100%;font-size:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 40px 10px 14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color 0.15s;box-sizing:border-box;"
+            oninput="document.getElementById('monthLabelClear').style.display=this.value?'flex':'none'"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'" />
+          <button id="monthLabelClear" onclick="document.getElementById('monthLabel').value='';document.getElementById('monthLabelClear').style.display='none';document.getElementById('monthLabel').focus();"
+            style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--bg3);border:none;cursor:pointer;color:var(--text3);width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;transition:color 0.15s;padding:0;"
+            onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'" title="Clear">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+        </div>
         <div class="card-title" style="margin-bottom:12px;">What's included</div>
         <div style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:20px;">
           ✓ &nbsp;Monthly gross + one-time income<br>
@@ -893,6 +903,7 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('ope
 
 document.getElementById('grossInput').addEventListener('input',render);
 document.getElementById('monthLabel').value=new Date().toLocaleDateString('en-PH',{month:'long',year:'numeric'});
+document.getElementById('monthLabelClear').style.display='flex';
 
 render();
 renderHistory();
