@@ -160,9 +160,303 @@
     .chart-legend{grid-template-columns:1fr;}
     .tax-summary{grid-template-columns:1fr;}
   }
+  /* ── Auth screens ── */
+  .auth-screen{display:none;position:fixed;inset:0;z-index:999;background:var(--bg);align-items:center;justify-content:center;padding:20px;}
+  .auth-screen.active{display:flex;}
+  .auth-box{width:100%;max-width:420px;}
+  .auth-logo{text-align:center;margin-bottom:32px;}
+  .auth-logo-title{font-family:'DM Serif Display',serif;font-size:32px;letter-spacing:-0.5px;}
+  .auth-logo-sub{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+  .auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 28px 24px;}
+  .auth-title{font-size:18px;font-weight:600;margin-bottom:4px;}
+  .auth-sub{font-size:13px;color:var(--text2);margin-bottom:24px;}
+  .auth-field{margin-bottom:16px;}
+  .auth-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block;font-weight:500;}
+  .auth-input{width:100%;font-size:14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color 0.15s;}
+  .auth-input:focus{border-color:var(--accent);}
+  .auth-input.error{border-color:var(--red);}
+  .auth-btn{width:100%;padding:13px;border-radius:var(--radius-sm);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;margin-top:4px;}
+  .auth-btn-primary{background:var(--accent);color:#fff;}
+  .auth-btn-primary:hover{background:var(--accent2);}
+  .auth-switch{text-align:center;margin-top:18px;font-size:13px;color:var(--text2);}
+  .auth-switch a{color:var(--accent);cursor:pointer;text-decoration:none;font-weight:500;}
+  .auth-switch a:hover{text-decoration:underline;}
+  .auth-error{font-size:12px;color:var(--red);margin-top:8px;display:none;padding:8px 12px;background:rgba(229,90,90,0.08);border-radius:var(--radius-sm);border:1px solid rgba(229,90,90,0.2);}
+  .auth-success{font-size:12px;color:var(--green);margin-top:8px;display:none;padding:8px 12px;background:rgba(52,199,138,0.08);border-radius:var(--radius-sm);border:1px solid rgba(52,199,138,0.2);}
+  .auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--text3);font-size:12px;}
+  .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  /* User avatar in sidebar */
+  .user-info{padding:14px 20px;border-top:1px solid var(--border);margin-top:auto;display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;}
+  .user-name{flex:1;min-width:0;}
+  .user-name-text{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .user-email-text{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .logout-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;transition:color 0.15s;flex-shrink:0;}
+  .logout-btn:hover{color:var(--red);}
+  .pw-wrap{position:relative;}
+  .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;transition:color 0.15s;}
+  .pw-toggle:hover{color:var(--text2);}
+  /* ── Landing page ── */
+  .landing{display:none;position:fixed;inset:0;z-index:998;background:var(--bg);overflow-y:auto;}
+  .landing.active{display:block;}
+  .land-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(15,17,23,0.92);backdrop-filter:blur(12px);z-index:10;}
+  .land-nav-logo{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.3px;}
+  .land-nav-logo span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;display:block;margin-top:1px;font-family:'DM Sans',sans-serif;}
+  .land-nav-btns{display:flex;align-items:center;gap:10px;}
+  .land-btn-ghost{padding:8px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+  .land-btn-ghost:hover{background:var(--bg2);color:var(--text);}
+  .land-btn-solid{padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+  .land-btn-solid:hover{background:var(--accent2);}
+  .land-hero{text-align:center;padding:90px 24px 72px;max-width:720px;margin:0 auto;}
+  .land-badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--accent);background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.25);border-radius:20px;padding:5px 14px;margin-bottom:28px;}
+  .land-h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,6vw,64px);line-height:1.1;letter-spacing:-1px;margin-bottom:20px;}
+  .land-h1 em{font-style:normal;color:var(--accent);}
+  .land-hero-sub{font-size:17px;color:var(--text2);line-height:1.7;max-width:520px;margin:0 auto 36px;}
+  .land-hero-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+  .land-hero-primary{padding:14px 32px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+  .land-hero-primary:hover{background:var(--accent2);transform:translateY(-1px);}
+  .land-hero-secondary{padding:14px 28px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+  .land-hero-secondary:hover{background:var(--bg2);color:var(--text);}
+  .land-stats{display:flex;justify-content:center;gap:48px;padding:40px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .land-stat-val{font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);}
+  .land-stat-label{font-size:12px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;}
+  .land-section{padding:72px 24px;max-width:1000px;margin:0 auto;}
+  .land-section-label{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+  .land-section-title{font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,38px);letter-spacing:-0.5px;margin-bottom:14px;}
+  .land-section-sub{font-size:15px;color:var(--text2);line-height:1.7;max-width:520px;margin-bottom:48px;}
+  .land-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+  .land-feature{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
+  .land-feature:hover{border-color:var(--border2);transition:border-color 0.2s;}
+  .land-feature-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:20px;}
+  .land-feature-title{font-size:15px;font-weight:600;margin-bottom:6px;}
+  .land-feature-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+  .land-how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px;}
+  .land-step{text-align:center;padding:24px 16px;}
+  .land-step-num{width:40px;height:40px;border-radius:50%;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.25);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:18px;color:var(--accent);margin:0 auto 14px;}
+  .land-step-title{font-size:14px;font-weight:600;margin-bottom:6px;}
+  .land-step-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+  .land-cta{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:56px 40px;text-align:center;margin:0 24px 72px;}
+  .land-cta-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,36px);letter-spacing:-0.5px;margin-bottom:12px;}
+  .land-cta-sub{font-size:15px;color:var(--text2);margin-bottom:28px;}
+  .land-footer{border-top:1px solid var(--border);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .land-footer-logo{font-family:'DM Serif Display',serif;font-size:16px;}
+  .land-footer-copy{font-size:12px;color:var(--text3);}
+  @media(max-width:720px){
+    .land-nav{padding:16px 20px;}
+    .land-features{grid-template-columns:1fr;}
+    .land-how{grid-template-columns:1fr;}
+    .land-cta{padding:36px 20px;margin:0 12px 48px;}
+    .land-stats{gap:28px;}
+    .land-footer{padding:20px;}
+  }
 </style>
 </head>
 <body>
+<!-- ══════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════ -->
+<div class="landing" id="landingPage">
+
+  <!-- Nav -->
+  <nav class="land-nav">
+    <div class="land-nav-logo">PesoTrack<span>Fund Tracker PH</span></div>
+    <div class="land-nav-btns">
+      <button class="land-btn-ghost" onclick="showAuth('login')">Sign in</button>
+      <button class="land-btn-solid" onclick="showAuth('register')">Get started free</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="land-hero">
+    <div class="land-badge">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 4v2.5l1.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Built for Filipino earners
+    </div>
+    <h1 class="land-h1">Track your money.<br><em>Keep your goals.</em></h1>
+    <p class="land-hero-sub">PesoTrack helps you manage your income, compute your BIR tax — whether you're a regular employee or freelancer — and budget smarter with the 50/30/20 rule.</p>
+    <div class="land-hero-btns">
+      <button class="land-hero-primary" onclick="showAuth('register')">Start tracking for free</button>
+      <button class="land-hero-secondary" onclick="showAuth('login')">I already have an account</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="land-stats">
+    <div style="text-align:center;">
+      <div class="land-stat-val">50/30/20</div>
+      <div class="land-stat-label">Budget rule built-in</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="land-stat-val">BIR</div>
+      <div class="land-stat-label">TRAIN Law accurate</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="land-stat-val">2 types</div>
+      <div class="land-stat-label">Employee & Freelancer tax</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="land-stat-val">Free</div>
+      <div class="land-stat-label">Always, no credit card</div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="land-section">
+    <div class="land-section-label">Features</div>
+    <h2 class="land-section-title">Everything you need to manage your peso</h2>
+    <p class="land-section-sub">From income tracking to tax computation to expense logging — all in one place, built for the Philippine context.</p>
+    <div class="land-features">
+      <div class="land-feature">
+        <div class="land-feature-icon" style="background:rgba(79,142,247,0.12);">💰</div>
+        <div class="land-feature-title">Income Tracking</div>
+        <div class="land-feature-desc">Log your monthly salary plus any one-time income like bonuses, 13th month pay, or freelance earnings.</div>
+      </div>
+      <div class="land-feature">
+        <div class="land-feature-icon" style="background:rgba(229,90,90,0.12);">🏛️</div>
+        <div class="land-feature-title">BIR Tax Computation</div>
+        <div class="land-feature-desc">Auto-computes your tax under the TRAIN Law — for both regular employees (withholding) and freelancers (8% flat or graduated + 3%).</div>
+      </div>
+      <div class="land-feature">
+        <div class="land-feature-icon" style="background:rgba(52,199,138,0.12);">📊</div>
+        <div class="land-feature-title">50/30/20 Budget</div>
+        <div class="land-feature-desc">Allocate your net income automatically into Needs, Wants, Savings, Debts, and Travel. Fully customizable percentages.</div>
+      </div>
+      <div class="land-feature">
+        <div class="land-feature-icon" style="background:rgba(240,160,74,0.12);">🧾</div>
+        <div class="land-feature-title">Expense Logging</div>
+        <div class="land-feature-desc">Track actual spending per category — groceries, utilities, rent, dining, travel — and see if you're staying within budget.</div>
+      </div>
+      <div class="land-feature">
+        <div class="land-feature-icon" style="background:rgba(155,127,232,0.12);">📈</div>
+        <div class="land-feature-title">Visual Charts</div>
+        <div class="land-feature-desc">Donut and bar charts give you a clear picture of where your money goes and how your spending compares to your budget.</div>
+      </div>
+      <div class="land-feature">
+        <div class="land-feature-icon" style="background:rgba(61,191,168,0.12);">📥</div>
+        <div class="land-feature-title">Export to CSV</div>
+        <div class="land-feature-desc">Download your full breakdown — income, tax, budget, and expenses — as a CSV file ready for Excel or Google Sheets.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="land-section" style="border-top:1px solid var(--border);padding-top:72px;">
+    <div class="land-section-label">How it works</div>
+    <h2 class="land-section-title">Up and running in minutes</h2>
+    <div class="land-how">
+      <div class="land-step">
+        <div class="land-step-num">1</div>
+        <div class="land-step-title">Create your account</div>
+        <div class="land-step-desc">Sign up free with your name and email. Your data is saved privately, only accessible to you.</div>
+      </div>
+      <div class="land-step">
+        <div class="land-step-num">2</div>
+        <div class="land-step-title">Enter your income</div>
+        <div class="land-step-desc">Choose your employment type, input your monthly gross salary, and add any extra income. Tax is computed automatically.</div>
+      </div>
+      <div class="land-step">
+        <div class="land-step-num">3</div>
+        <div class="land-step-title">Track and export</div>
+        <div class="land-step-desc">Log expenses, review your budget split, save monthly snapshots, and export everything to a spreadsheet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="land-cta">
+    <div class="land-cta-title">Ready to take control of your finances?</div>
+    <div class="land-cta-sub">Join PesoTrack and start budgeting smarter today. It's completely free.</div>
+    <button class="land-hero-primary" onclick="showAuth('register')">Create your free account</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="land-footer">
+    <div class="land-footer-logo">PesoTrack</div>
+    <div class="land-footer-copy">© 2026 PesoTrack. Built for Filipino earners. 🇵🇭</div>
+    <div style="display:flex;gap:16px;">
+      <span style="font-size:12px;color:var(--text3);cursor:pointer;" onclick="showAuth('login')">Sign in</span>
+      <span style="font-size:12px;color:var(--text3);cursor:pointer;" onclick="showAuth('register')">Register</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Login Screen ── -->
+<div class="auth-screen active" id="authLogin">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-title">PesoTrack</div>
+      <div class="auth-logo-sub">Fund Tracker PH</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to your account to continue.</div>
+      <div class="auth-field">
+        <label class="auth-label">Email address</label>
+        <input class="auth-input" type="email" id="loginEmail" placeholder="you@email.com" autocomplete="email" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" style="padding-right:42px;" />
+          <button class="pw-toggle" onclick="togglePw('loginPassword',this)" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="auth-error" id="loginError"></div>
+      <button class="auth-btn auth-btn-primary" onclick="doLogin()" style="margin-top:8px;">Sign in</button>
+      <div class="auth-switch">Don't have an account? <a onclick="showAuth('register')">Create one</a></div>
+      <div style="text-align:center;margin-top:12px;"><a onclick="showLanding()" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:none;" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">← Back to home</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Register Screen ── -->
+<div class="auth-screen" id="authRegister">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-title">PesoTrack</div>
+      <div class="auth-logo-sub">Fund Tracker PH</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-title">Create your account</div>
+      <div class="auth-sub">Start tracking your funds today — it's free.</div>
+      <div class="auth-field">
+        <label class="auth-label">Full name</label>
+        <input class="auth-input" type="text" id="regName" placeholder="Juan dela Cruz" autocomplete="name" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Email address</label>
+        <input class="auth-input" type="email" id="regEmail" placeholder="you@email.com" autocomplete="email" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="regPassword" placeholder="Min. 6 characters" autocomplete="new-password" style="padding-right:42px;" />
+          <button class="pw-toggle" onclick="togglePw('regPassword',this)" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Confirm password</label>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="regConfirm" placeholder="••••••••" autocomplete="new-password" style="padding-right:42px;" />
+          <button class="pw-toggle" onclick="togglePw('regConfirm',this)" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="auth-error" id="regError"></div>
+      <div class="auth-success" id="regSuccess"></div>
+      <button class="auth-btn auth-btn-primary" onclick="doRegister()" style="margin-top:8px;">Create account</button>
+      <div class="auth-switch">Already have an account? <a onclick="showAuth('login')">Sign in</a></div>
+      <div style="text-align:center;margin-top:12px;"><a onclick="showLanding()" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:none;" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">← Back to home</a></div>
+    </div>
+  </div>
+</div>
+
 <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
 <div class="app">
   <nav class="sidebar" id="sidebar">
@@ -192,6 +486,17 @@
     </div>
     <div class="nav-item" onclick="showPage('export')">
       <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Export CSV
+    </div>
+    <div style="flex:1;"></div>
+    <div class="user-info">
+      <div class="user-avatar" id="sidebarAvatar">?</div>
+      <div class="user-name">
+        <div class="user-name-text" id="sidebarName">—</div>
+        <div class="user-email-text" id="sidebarEmail">—</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()" title="Sign out">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </nav>
 
@@ -1075,9 +1380,146 @@ document.getElementById('grossInput').addEventListener('input',render);
 document.getElementById('monthLabel').value=new Date().toLocaleDateString('en-PH',{month:'long',year:'numeric'});
 document.getElementById('monthLabelClear').style.display='flex';
 
-render();
-renderHistory();
-renderExportLog();
+// ══════════════════════════════════════════
+// AUTH SYSTEM
+// ══════════════════════════════════════════
+let currentUser = null;
+
+function getUsers(){ return JSON.parse(localStorage.getItem('pesotrack_users')||'[]'); }
+function saveUsers(u){ localStorage.setItem('pesotrack_users',JSON.stringify(u)); }
+function userKey(email){ return 'pesotrack_data_'+email.toLowerCase().replace(/[^a-z0-9]/g,'_'); }
+
+function showLanding(){
+  document.getElementById('landingPage').classList.add('active');
+  document.getElementById('authLogin').classList.remove('active');
+  document.getElementById('authRegister').classList.remove('active');
+}
+
+function showAuth(screen){
+  document.getElementById('landingPage').classList.remove('active');
+  document.getElementById('authLogin').classList.toggle('active', screen==='login');
+  document.getElementById('authRegister').classList.toggle('active', screen==='register');
+  clearAuthErrors();
+}
+function clearAuthErrors(){
+  ['loginError','regError','regSuccess'].forEach(id=>{ const el=document.getElementById(id); if(el){el.style.display='none';el.textContent='';} });
+  document.querySelectorAll('.auth-input').forEach(i=>i.classList.remove('error'));
+}
+function showAuthError(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; }
+function togglePw(inputId,btn){ const inp=document.getElementById(inputId); inp.type=inp.type==='password'?'text':'password'; btn.style.opacity=inp.type==='text'?'1':'0.5'; }
+
+function doLogin(){
+  clearAuthErrors();
+  const email=(document.getElementById('loginEmail').value||'').trim().toLowerCase();
+  const pass=document.getElementById('loginPassword').value||'';
+  if(!email){ document.getElementById('loginEmail').classList.add('error'); return showAuthError('loginError','Please enter your email.'); }
+  if(!pass){ document.getElementById('loginPassword').classList.add('error'); return showAuthError('loginError','Please enter your password.'); }
+  const users=getUsers();
+  const user=users.find(u=>u.email===email);
+  if(!user) return showAuthError('loginError','No account found with that email.');
+  if(user.password!==btoa(pass)) return showAuthError('loginError','Incorrect password. Please try again.');
+  loginSuccess(user);
+}
+
+function doRegister(){
+  clearAuthErrors();
+  const name=(document.getElementById('regName').value||'').trim();
+  const email=(document.getElementById('regEmail').value||'').trim().toLowerCase();
+  const pass=document.getElementById('regPassword').value||'';
+  const confirm=document.getElementById('regConfirm').value||'';
+  if(!name){ document.getElementById('regName').classList.add('error'); return showAuthError('regError','Please enter your full name.'); }
+  if(!email||!email.includes('@')){ document.getElementById('regEmail').classList.add('error'); return showAuthError('regError','Please enter a valid email address.'); }
+  if(pass.length<6){ document.getElementById('regPassword').classList.add('error'); return showAuthError('regError','Password must be at least 6 characters.'); }
+  if(pass!==confirm){ document.getElementById('regConfirm').classList.add('error'); return showAuthError('regError','Passwords do not match.'); }
+  const users=getUsers();
+  if(users.find(u=>u.email===email)){ document.getElementById('regEmail').classList.add('error'); return showAuthError('regError','An account with this email already exists.'); }
+  const user={id:Date.now(),name,email,password:btoa(pass),createdAt:new Date().toISOString()};
+  users.push(user); saveUsers(users);
+  const s=document.getElementById('regSuccess'); s.textContent='Account created! Signing you in…'; s.style.display='block';
+  setTimeout(()=>loginSuccess(user),900);
+}
+
+function loginSuccess(user){
+  currentUser=user;
+  localStorage.setItem('pesotrack_session',JSON.stringify({email:user.email,id:user.id}));
+  loadUserData();
+  updateSidebarUser();
+  document.getElementById('authLogin').classList.remove('active');
+  document.getElementById('authRegister').classList.remove('active');
+  render(); renderHistory(); renderExportLog();
+}
+
+function doLogout(){
+  if(!confirm('Sign out of PesoTrack?')) return;
+  saveCurrentUserData();
+  currentUser=null;
+  localStorage.removeItem('pesotrack_session');
+  document.getElementById('grossInput').value=0;
+  oneTimeItems=[];
+  CATS.forEach(c=>{ expenses[c.key]=c.defaults.map((d,i)=>({id:c.key+'_'+i,label:d,amount:0})); });
+  snapshots=[]; exportLog=[];
+  taxType='employee'; freelancerOption='flat8';
+  renderOTList(); render();
+  showLanding();
+}
+
+function updateSidebarUser(){
+  if(!currentUser) return;
+  const initials=currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('sidebarAvatar').textContent=initials;
+  document.getElementById('sidebarName').textContent=currentUser.name;
+  document.getElementById('sidebarEmail').textContent=currentUser.email;
+}
+
+function saveCurrentUserData(){
+  if(!currentUser) return;
+  const data={grossInput:document.getElementById('grossInput').value,oneTimeItems,expenses,pcts,taxType,freelancerOption,snapshots,exportLog,savedAt:new Date().toISOString()};
+  localStorage.setItem(userKey(currentUser.email),JSON.stringify(data));
+}
+
+function loadUserData(){
+  if(!currentUser) return;
+  const raw=localStorage.getItem(userKey(currentUser.email));
+  if(!raw) return;
+  try{
+    const data=JSON.parse(raw);
+    if(data.grossInput!==undefined) document.getElementById('grossInput').value=data.grossInput;
+    if(data.oneTimeItems) oneTimeItems=data.oneTimeItems;
+    if(data.expenses) CATS.forEach(c=>{ if(data.expenses[c.key]) expenses[c.key]=data.expenses[c.key]; });
+    if(data.pcts) CATS.forEach(c=>{ if(data.pcts[c.key]!==undefined) pcts[c.key]=data.pcts[c.key]; });
+    if(data.taxType) taxType=data.taxType;
+    if(data.freelancerOption) freelancerOption=data.freelancerOption;
+    if(data.snapshots) snapshots=data.snapshots;
+    if(data.exportLog) exportLog=data.exportLog;
+    renderOTList();
+    setTaxType(taxType);
+    setFreelancerOption(freelancerOption);
+  }catch(e){ console.warn('Could not load user data',e); }
+}
+
+// Auto-save every 30s + on unload
+setInterval(()=>{ if(currentUser) saveCurrentUserData(); },30000);
+window.addEventListener('beforeunload',()=>{ if(currentUser) saveCurrentUserData(); });
+
+// Enter key support
+document.getElementById('loginPassword').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('regConfirm').addEventListener('keydown',e=>{ if(e.key==='Enter') doRegister(); });
+document.getElementById('loginEmail').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
+document.getElementById('regEmail').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('regPassword').focus(); });
+
+// Check for existing session on load
+(function checkSession(){
+  render();
+  const sess=localStorage.getItem('pesotrack_session');
+  if(sess){
+    try{
+      const s=JSON.parse(sess);
+      const user=getUsers().find(u=>u.email===s.email&&u.id===s.id);
+      if(user){ loginSuccess(user); return; }
+    }catch(e){}
+  }
+  showLanding();
+})();
 </script>
 </body>
 </html>
